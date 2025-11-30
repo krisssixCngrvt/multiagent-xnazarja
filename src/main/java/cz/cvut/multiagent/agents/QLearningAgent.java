@@ -44,6 +44,9 @@ public class QLearningAgent implements ForagingAgent {
     public Action selectAction(State state) {
         String stateKey = getStateKey(state);
         
+        // Initialize Q-values for this state if not present
+        initializeQValues(stateKey);
+        
         // Epsilon-greedy exploration
         if (random.nextDouble() < epsilon) {
             return Action.values()[random.nextInt(Action.values().length)];
@@ -98,11 +101,16 @@ public class QLearningAgent implements ForagingAgent {
     private String getStateKey(State state) {
         StringBuilder key = new StringBuilder();
         
-        // Find this agent
-        var agent = state.agents.stream()
+        // Find this agent - return default key if agent not found (episode over)
+        var agentOpt = state.agents.stream()
             .filter(a -> a.id == agentId)
-            .findFirst()
-            .orElseThrow();
+            .findFirst();
+        
+        if (agentOpt.isEmpty()) {
+            return "terminal";
+        }
+        
+        var agent = agentOpt.get();
         
         // Agent position (discretized to 2x2 grid cells)
         int gridX = agent.position.x / 2;
@@ -117,11 +125,11 @@ public class QLearningAgent implements ForagingAgent {
                     Math.abs(f.position.y - agent.position.y)))
                 .get();
             
-            int relX = (nearestFood.position.x - agent.position.x) / 2;
-            int relY = (nearestFood.position.y - agent.position.y) / 2;
+            int relX = Integer.signum(nearestFood.position.x - agent.position.x);
+            int relY = Integer.signum(nearestFood.position.y - agent.position.y);
             key.append(relX).append(",").append(relY).append(",").append(nearestFood.level);
         } else {
-            key.append("0,0,0");
+            key.append("done");
         }
         
         return key.toString();

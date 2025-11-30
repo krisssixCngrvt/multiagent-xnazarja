@@ -168,18 +168,35 @@ public class Trainer {
         int width = environment.getWidth();
         int height = environment.getHeight();
         
-        // Add agents at random positions
+        // Track used positions to avoid collisions
+        Set<String> usedPositions = new HashSet<>();
+        
+        // Add agents at unique random positions
         for (ForagingAgent agent : agents) {
-            int x = rand.nextInt(width);
-            int y = rand.nextInt(height);
+            int x, y;
+            int attempts = 0;
+            do {
+                x = rand.nextInt(width);
+                y = rand.nextInt(height);
+                attempts++;
+            } while (usedPositions.contains(x + "," + y) && attempts < 100);
+            
+            usedPositions.add(x + "," + y);
             environment.addAgent(agent.getAgentId(), 1 + rand.nextInt(2), new Position(x, y));
         }
         
-        // Add food items
+        // Add food items at unique positions
         int foodCount = 3 + rand.nextInt(3); // 3-5 food items
         for (int i = 0; i < foodCount; i++) {
-            int x = rand.nextInt(width);
-            int y = rand.nextInt(height);
+            int x, y;
+            int attempts = 0;
+            do {
+                x = rand.nextInt(width);
+                y = rand.nextInt(height);
+                attempts++;
+            } while (usedPositions.contains(x + "," + y) && attempts < 100);
+            
+            usedPositions.add(x + "," + y);
             int level = 1 + rand.nextInt(3); // Level 1-3
             environment.addFood(level, new Position(x, y));
         }
