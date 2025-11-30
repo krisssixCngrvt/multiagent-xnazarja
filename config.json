@@ -1,0 +1,30 @@
+{
+  "gridWidth": 8,
+  "gridHeight": 8,
+  "maxSteps": 200,
+  "numAgents": 4,
+  "minFood": 3,
+  "maxFood": 5,
+  
+  "trainingEpisodes": 1000,
+  "evaluationEpisodes": 100,
+  "verbose": true,
+  
+  "qLearningRate": 0.1,
+  "qDiscountFactor": 0.95,
+  "qInitialEpsilon": 1.0,
+  "qEpsilonDecay": 0.995,
+  "qMinEpsilon": 0.01,
+  
+  "dqnLearningRate": 0.001,
+  "dqnDiscountFactor": 0.95,
+  "dqnInitialEpsilon": 1.0,
+  "dqnEpsilonDecay": 0.995,
+  "dqnMinEpsilon": 0.01,
+  "dqnReplayBufferSize": 10000,
+  "dqnBatchSize": 32,
+  "dqnTargetUpdateFreq": 100,
+  
+  "hiddenLayers": [128, 128, 64],
+  "activation": "relu"
+}
