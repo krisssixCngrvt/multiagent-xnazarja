@@ -7,6 +7,8 @@ import java.util.*;
  * Uses epsilon-greedy exploration and experience replay for stable learning.
  */
 public class QLearningAgent {
+    private static final double REPLAY_LEARNING_RATE_MULTIPLIER = 0.5;
+    
     private final Map<Integer, double[]> qTable;
     private final int numActions;
     private double epsilon;
@@ -17,7 +19,7 @@ public class QLearningAgent {
     private final Random random;
     
     // Experience replay
-    private final List<Experience> experienceBuffer;
+    private final LinkedList<Experience> experienceBuffer;
     private final int bufferSize;
     private final int batchSize;
     
@@ -36,8 +38,8 @@ public class QLearningAgent {
         this.qTable = new HashMap<>();
         this.random = new Random();
         
-        // Experience replay settings
-        this.experienceBuffer = new ArrayList<>();
+        // Experience replay settings with LinkedList for O(1) removal from front
+        this.experienceBuffer = new LinkedList<>();
         this.bufferSize = 10000;
         this.batchSize = 32;
     }
@@ -118,7 +120,7 @@ public class QLearningAgent {
     
     private void storeExperience(int state, int action, double reward, int nextState, boolean done) {
         if (experienceBuffer.size() >= bufferSize) {
-            experienceBuffer.remove(0);
+            experienceBuffer.removeFirst();
         }
         experienceBuffer.add(new Experience(state, action, reward, nextState, done));
     }
@@ -132,7 +134,7 @@ public class QLearningAgent {
             batch.add(experienceBuffer.get(random.nextInt(experienceBuffer.size())));
         }
         
-        // Learn from batch
+        // Learn from batch with reduced learning rate for stability
         for (Experience exp : batch) {
             double[] qValues = getQValues(exp.state);
             double[] nextQValues = getQValues(exp.nextState);
@@ -140,7 +142,7 @@ public class QLearningAgent {
             double maxNextQ = exp.done ? 0 : getMaxQ(nextQValues);
             double target = exp.reward + discountFactor * maxNextQ;
             
-            qValues[exp.action] += learningRate * 0.5 * (target - qValues[exp.action]);
+            qValues[exp.action] += learningRate * REPLAY_LEARNING_RATE_MULTIPLIER * (target - qValues[exp.action]);
         }
     }
     

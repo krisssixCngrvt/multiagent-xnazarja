@@ -7,6 +7,8 @@ import java.util.*;
  * Agents must collect food items scattered across the grid to maximize score.
  */
 public class GridWorld {
+    private static final int DEFAULT_SEED = 42;
+    
     private final int width;
     private final int height;
     private final int[][] grid;
@@ -36,7 +38,7 @@ public class GridWorld {
         this.maxSteps = maxSteps;
         this.grid = new int[height][width];
         this.agentPositions = new ArrayList<>();
-        this.random = new Random(42); // Fixed seed for reproducibility
+        this.random = new Random(DEFAULT_SEED);
         
         initialize(numAgents, numFood, numObstacles);
     }
@@ -220,7 +222,9 @@ public class GridWorld {
     }
     
     public void reset(int numAgents, int numFood, int numObstacles) {
-        random.setSeed(System.currentTimeMillis()); // New seed for variety
+        // Use time-based seed for variety during training episodes
+        // This ensures agents learn to generalize across different layouts
+        random.setSeed(System.currentTimeMillis());
         initialize(numAgents, numFood, numObstacles);
     }
     
