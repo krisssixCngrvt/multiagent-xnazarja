@@ -55,7 +55,7 @@ def main():
         strategy_scores[strategy].append(agent.score)
     
     for strategy, scores in sorted(strategy_scores.items()):
-        avg_score = sum(scores) / len(scores)
+        avg_score = sum(scores) / len(scores) if scores else 0
         print(f"  {strategy.capitalize():<12}: Avg Score = {avg_score:.2f}, "
               f"Total = {sum(scores)}, Agents = {len(scores)}")
     

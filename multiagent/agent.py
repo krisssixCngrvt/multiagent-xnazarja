@@ -54,7 +54,7 @@ class Agent:
             dx = 1 if x < center else (-1 if x > center else 0)
             dy = 1 if y < center else (-1 if y > center else 0)
         elif self.strategy == "cooperative":
-            # Move in a more structured pattern
+            # Move with bias towards positive directions (predictable pattern)
             dx = 1 if random.random() > 0.5 else 0
             dy = 1 if random.random() > 0.5 else 0
         else:
